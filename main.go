@@ -27,7 +27,7 @@ func main() {
 		if err != nil {
 			log.Errorf("Failed to analyze flight packages: %v", err)
 		}
-		log.Infof("Flights: %v", bestPackages)
+		log.Info(flights.BeautifyResults(bestPackages))
 	}
 	log.Infof("Date ranges: %v", ranges)
 }

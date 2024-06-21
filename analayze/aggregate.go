@@ -16,7 +16,7 @@ func AnalyzeFlightPackages(packages *flights.FlightPackage) (map[string]flights.
 		for _, route := range pkg.Route {
 			departureDate := time.Unix(route.ATime, 0)
 			arrivalDate := time.Unix(route.DrTime, 0)
-			if arrivalDate.Sub(departureDate) < minimumDuration {
+			if arrivalDate.Sub(departureDate) < time.Hour*24*minimumDuration {
 				continue
 			}
 			key := fmt.Sprintf("%s_%s_%s", route.FlyTo, departureDate.Format("2006-01-02"), arrivalDate.Format("2006-01-02"))
