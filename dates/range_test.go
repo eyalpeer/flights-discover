@@ -12,7 +12,7 @@ func TestFindDateRanges(t *testing.T) {
 		endDate   string
 		dayBegin  Weekday
 		dayStart  Weekday
-		want      []DateRange
+		want      []Range
 		wantErr   bool
 	}{
 		{
@@ -21,7 +21,7 @@ func TestFindDateRanges(t *testing.T) {
 			endDate:   "2023-06-30",
 			dayBegin:  Wednesday,
 			dayStart:  Tuesday,
-			want: []DateRange{
+			want: []Range{
 				{BeginDate: "2023-06-07", EndDate: "2023-06-13"},
 				{BeginDate: "2023-06-14", EndDate: "2023-06-20"},
 				{BeginDate: "2023-06-21", EndDate: "2023-06-27"},
@@ -35,7 +35,7 @@ func TestFindDateRanges(t *testing.T) {
 			endDate:   "2023-07-31",
 			dayBegin:  Friday,
 			dayStart:  Thursday,
-			want: []DateRange{
+			want: []Range{
 				{BeginDate: "2023-07-07", EndDate: "2023-07-13"},
 				{BeginDate: "2023-07-14", EndDate: "2023-07-20"},
 				{BeginDate: "2023-07-21", EndDate: "2023-07-27"},
@@ -49,7 +49,7 @@ func TestFindDateRanges(t *testing.T) {
 			endDate:   "2023-08-14",
 			dayBegin:  Tuesday,
 			dayStart:  Monday,
-			want: []DateRange{
+			want: []Range{
 				{BeginDate: "2023-08-01", EndDate: "2023-08-07"},
 				{BeginDate: "2023-08-08", EndDate: "2023-08-14"},
 			},
@@ -61,7 +61,7 @@ func TestFindDateRanges(t *testing.T) {
 			endDate:   "2023-09-16", // Saturday
 			dayBegin:  Sunday,
 			dayStart:  Saturday,
-			want: []DateRange{
+			want: []Range{
 				{BeginDate: "2023-09-03", EndDate: "2023-09-09"},
 				{BeginDate: "2023-09-10", EndDate: "2023-09-16"},
 			},
@@ -73,7 +73,7 @@ func TestFindDateRanges(t *testing.T) {
 			endDate:   "2023-10-05", // Thursday
 			dayBegin:  Thursday,
 			dayStart:  Friday,
-			want: []DateRange{
+			want: []Range{
 				{BeginDate: "2023-10-05", EndDate: "2023-10-05"},
 			},
 			wantErr: false,
@@ -84,7 +84,7 @@ func TestFindDateRanges(t *testing.T) {
 			endDate:   "2023-11-01",
 			dayBegin:  Wednesday,
 			dayStart:  Tuesday,
-			want:      []DateRange{},
+			want:      []Range{},
 			wantErr:   false,
 		},
 		{
@@ -111,7 +111,7 @@ func TestFindDateRanges(t *testing.T) {
 			endDate:   "2024-03-08", // Friday
 			dayBegin:  Saturday,
 			dayStart:  Friday,
-			want: []DateRange{
+			want: []Range{
 				{BeginDate: "2024-02-24", EndDate: "2024-03-01"},
 				{BeginDate: "2024-03-02", EndDate: "2024-03-08"},
 			},
@@ -123,7 +123,7 @@ func TestFindDateRanges(t *testing.T) {
 			endDate:   "2024-01-10", // Wednesday
 			dayBegin:  Thursday,
 			dayStart:  Wednesday,
-			want: []DateRange{
+			want: []Range{
 				{BeginDate: "2023-12-28", EndDate: "2024-01-03"},
 				{BeginDate: "2024-01-04", EndDate: "2024-01-10"},
 			},

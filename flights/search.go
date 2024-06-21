@@ -27,7 +27,7 @@ type Search struct {
 	EndAirports     string `json:"endairports"`
 	Stopovers       string `json:"stopovers"`
 	MaxStops        int    `json:"maxstops"`
-	Version         string `json:"version"`
+	Version         int    `json:"version"`
 	Useragent       string `json:"useragent"`
 	DeviceType      string `json:"devicetype"`
 	ClickId         string `json:"clickid"`
