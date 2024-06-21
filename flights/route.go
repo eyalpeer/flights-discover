@@ -6,7 +6,9 @@ import (
 	"github.com/leonm1/airports-go"
 	log "github.com/sirupsen/logrus"
 	"math"
+	"os"
 	"sort"
+	"text/tabwriter"
 	"time"
 )
 
@@ -76,33 +78,57 @@ func (route *Route) Enrich() {
 	}
 }
 
-func (route *Route) String(withLinks bool) string {
-	var buffer bytes.Buffer
+func (route *Route) String() string {
 	route.Enrich()
-	buffer.WriteString(fmt.Sprintf(
-		`Departure: %s, Arrival: %s, Return Departure: %s, Return Arrival: %s, Fly to: %s, Carrier: %s, Price: %d`,
-		time.Unix(route.DTime, 0).Format("2006-01-02 15:04"),
-		time.Unix(route.ATime, 0).Format("2006-01-02 15:04"),
-		time.Unix(route.DrTime, 0).Format("2006-01-02 15:04"),
-		time.Unix(route.ArTime, 0).Format("2006-01-02 15:04"),
-		route.FlyToCity, route.OperatingCarrierName, int(math.Round(route.Price))))
-	if withLinks {
-		buffer.WriteString("\n")
-		buffer.WriteString(route.DeepLink)
+
+	var depTime, arrTime, retDepTime, retArrTime string
+	if departureTime := time.Unix(route.DTime, 0); !departureTime.IsZero() {
+		depTime = departureTime.Format("2006-01-02 15:04")
 	}
-	return buffer.String()
+	if arrivalTime := time.Unix(route.ATime, 0); !arrivalTime.IsZero() {
+		arrTime = arrivalTime.Format("2006-01-02 15:04")
+	}
+	if returnDepartureTime := time.Unix(route.DrTime, 0); !returnDepartureTime.IsZero() {
+		retDepTime = returnDepartureTime.Format("2006-01-02 15:04")
+	}
+	if returnArrivalTime := time.Unix(route.ArTime, 0); !returnArrivalTime.IsZero() {
+		retArrTime = returnArrivalTime.Format("2006-01-02 15:04")
+	}
+
+	return fmt.Sprintf("%s\t%s\t%s\t%s\t%s\t%s\t%d",
+		depTime, arrTime, retDepTime, retArrTime,
+		route.FlyToCity, route.OperatingCarrierName, int(math.Round(route.Price)),
+	)
 }
 
-func BeautifyResults(results map[string]Route) string {
-	var buffer bytes.Buffer
-	buffer.WriteString("Best package flights:\n")
-	sortSlice := sortMap(results)
-	for _, route := range sortSlice {
-		routeDetails := route.String(true)
-		buffer.WriteString(routeDetails)
-		buffer.WriteString("\n")
+func BeautifyResults(results map[string]Route, links bool) string {
+	if len(results) == 0 {
+		return "No results found."
 	}
-	return buffer.String()
+	sortSlice := sortMap(results)
+
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(w, "Departure\tArrival\tReturn Dep.\tReturn Arr.\tDestination\tCarrier\tPrice")
+	fmt.Fprintln(w, "---------\t-------\t----------\t----------\t-----------\t-------\t-----")
+
+	for _, route := range sortSlice {
+		routeDetails := route.String()
+		fmt.Fprintln(w, routeDetails)
+	}
+
+	w.Flush()
+	if links {
+		var linksBuffer bytes.Buffer
+		for _, route := range sortSlice {
+			if route.DeepLink != "" {
+				linksBuffer.WriteString(route.DeepLink)
+				linksBuffer.WriteString("\n")
+			}
+		}
+
+		return linksBuffer.String()
+	}
+	return ""
 }
 
 func sortMap(routesMap map[string]Route) []Route {

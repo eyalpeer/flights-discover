@@ -3,12 +3,13 @@ package analayze
 import (
 	"fmt"
 	"main.go/flights"
+	"math"
 	"time"
 )
 
 const minimumDuration = 2
 
-func AnalyzeFlightPackages(packages *flights.FlightPackage) (map[string]flights.Route, error) {
+func AnalyzeFlightPackages(packages *flights.FlightPackage, maxPrice int) (map[string]flights.Route, error) {
 	cheapestPackages := make(map[string]flights.Route)
 	dateRanges := make(map[string][]time.Time)
 
@@ -16,7 +17,7 @@ func AnalyzeFlightPackages(packages *flights.FlightPackage) (map[string]flights.
 		for _, route := range pkg.Route {
 			departureDate := time.Unix(route.ATime, 0)
 			arrivalDate := time.Unix(route.DrTime, 0)
-			if arrivalDate.Sub(departureDate) < time.Hour*24*minimumDuration {
+			if arrivalDate.Sub(departureDate) < time.Hour*24*minimumDuration || int(math.Round(route.Price)) > maxPrice {
 				continue
 			}
 			key := fmt.Sprintf("%s_%s_%s", route.FlyTo, departureDate.Format("2006-01-02"), arrivalDate.Format("2006-01-02"))
